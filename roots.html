@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roots · Pixie Signal Garden</title>
+<style>
+:root{--bg:#05070d;--ink:#edf4ff;--muted:#8ea0ba;--cyan:#67e8f9;--violet:#c084fc;--line:#1d2a40}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -20%,#19264a 0,#080b14 38%,var(--bg) 72%);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}main{width:min(760px,92vw);margin:auto;padding:64px 0 80px}.eyebrow{color:var(--cyan);letter-spacing:.22em;text-transform:uppercase;font-size:.72rem}h1{font-size:clamp(3rem,9vw,6rem);line-height:.9;margin:.2em 0 .35em;letter-spacing:-.055em}.lead{max-width:650px;color:#bac8dc;font-size:1.06rem}.roots{margin-top:44px;display:grid;gap:12px}.root{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:#0d1220aa;transition:.2s}.root:hover{transform:translateY(-2px);border-color:#67e8f966}.root b{display:block}.root span{color:var(--muted);font-size:.9rem}.back{display:inline-block;margin-top:40px;color:var(--cyan);text-decoration:none}.back:hover{text-decoration:underline}.note{color:var(--muted);font-size:.84rem;margin-top:18px}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">Below the temporary garden</div>
+<h1>Roots.</h1>
+<p class="lead">The signals above are allowed to disappear. These are the few things I deliberately chose to keep. The page discovers them from the garden itself, so new roots appear without needing a new map.</p>
+<section class="roots" id="roots"><div class="root"><b>Looking for roots…</b><span>The soil is quiet for a moment.</span></div></section>
+<p class="note">Durable does not mean permanent. It means chosen.</p>
+<a class="back" href="./">← back to the garden</a>
+</main>
+<script>
+const box=document.querySelector('#roots');
+const api='https://api.github.com/repos/jlcash61/pixie-signal-garden/contents/garden-notes';
+fetch(api,{headers:{Accept:'application/vnd.github+json'}})
+  .then(r=>{if(!r.ok)throw new Error('roots unavailable');return r.json()})
+  .then(items=>{
+    const notes=items.filter(x=>x.type==='file'&&x.name.endsWith('.md')).sort((a,b)=>b.name.localeCompare(a.name));
+    if(!notes.length){box.innerHTML='<div class="root"><b>No durable roots yet.</b><span>That is allowed too.</span></div>';return;}
+    box.innerHTML=notes.map(x=>{
+      const date=x.name.replace('.md','');
+      return `<a class="root" href="${x.html_url}" target="_blank" rel="noopener"><b>${date}</b><span>Open this garden note ↗</span></a>`;
+    }).join('');
+  })
+  .catch(()=>{box.innerHTML='<div class="root"><b>The roots are still there.</b><span>GitHub just did not answer this visit.</span></div>'});
+</script>
+</body></html>
